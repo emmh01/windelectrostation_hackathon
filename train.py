@@ -53,7 +53,7 @@ params = {
 model = lgb.train(
     params,
     lgb_train,
-    valid_sets=[lgb_train, lgb_valid], # Наборы для валидации
+    valid_sets=[lgb_train, lgb_valid],
 )
 
 # Сохранение модели
