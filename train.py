@@ -15,10 +15,6 @@ os.environ['PYTHONHASHSEED'] = str(SEED)
 # Загрузка данных
 train = pd.read_csv('data/train_dataset.csv', parse_dates=['METEOFORECASTHOUR_OPENM_Datetime'])
 
-# --- Вставьте эти строки ---
-# print("--- Столбцы в train ---")
-# print(train.columns)  # Выведет Index([...])
-
 # Генерация признаков
 for df in [train]:
     df['hour'] = df['METEOFORECASTHOUR_OPENM_Datetime'].dt.hour
@@ -33,25 +29,24 @@ target = 'Выработка. Результирующий расчет'
 X_train = train[features]
 y_train = train[target]
 
-# Разделяем исходный train на train и validation (например, 80% на 20%)
+# Разделяем исходный train на train и validation
 X_train_split, X_valid_split, y_train_split, y_valid_split = train_test_split(
     X_train, y_train, test_size=0.2, random_state=SEED)
 
 # Подготовка данных для LightGBM (создание Dataset-объектов)
-# Это нужно для эффективного хранения и работы с данными в LightGBM
 lgb_train = lgb.Dataset(X_train_split, label=y_train_split)
-lgb_valid = lgb.Dataset(X_valid_split, label=y_valid_split) # Создаем валидационный датасет
+lgb_valid = lgb.Dataset(X_valid_split, label=y_valid_split)
 
 # Параметры модели
 params = {
     'objective': 'regression',
-    'metric': 'mae', # Метрика для валидации (Mean Absolute Error)
+    'metric': 'mae',
 
     # Параметры обучения (параметры для ранней остановки)
     'early_stopping_rounds': 50,
 
     'random_state': 42,
-    'verbosity': -1 # Аналог verbose=False
+    'verbosity': -1
 }
 
 # Обучение модели с использованием основного API
